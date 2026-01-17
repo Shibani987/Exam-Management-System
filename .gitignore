@@ -1,0 +1,84 @@
+# =========================
+# Python & Django
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+db.sqlite3
+migrations/
+!*/migrations/__init__.py
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.production
+.env.development
+
+# =========================
+# Django Specific
+# =========================
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.mo
+.DS_Store
+*.db
+*.sqlite3
+/media/
+staticfiles/
+static/
+tmp/
+logs/
+
+# =========================
+# Supabase
+# =========================
+supabase/.temp/
+supabase/.output/
+supabase/.env
+.supabase/
+
+# =========================
+# Virtual Environment
+# =========================
+venv/
+env/
+ENV/
+.venv/
+.env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# =========================
+# IDE & Editor Settings
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# =========================
+# Node / Frontend Builds (if used)
+# =========================
+node_modules/
+dist/
+build/
+package-lock.json
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# =========================
+# OS Files
+# =========================
+Thumbs.db
+ehthumbs.db
+Icon?
+.DS_Store
+Desktop.ini

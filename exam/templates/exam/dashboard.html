@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Management System</title>
+<link rel="stylesheet" href="{% static 'exam/css/dashboard.css' %}">
+</head>
+<body>
+
+<div class="container">
+<h1>Exam Management System</h1>
+<p class="subtitle">Admin Dashboard - Setup Exams & Manage Seating</p>
+
+<!-- STEP INDICATOR -->
+<div class="stepper">
+    <div class="step active" id="step1">
+        <div class="step-number">1</div>
+        <p>Exam Setup</p>
+    </div>
+    <div class="step" id="step2">
+        <div class="step-number">2</div>
+        <p>Department Selection</p>
+    </div>
+    <div class="step" id="step3">
+        <div class="step-number">3</div>
+        <p>Room Setup</p>
+    </div>
+    <div class="step" id="step4">
+        <div class="step-number">4</div>
+        <p>Student Data</p>
+    </div>
+    <div class="step" id="step5">
+        <div class="step-number">5</div>
+        <p>Seat Allocation</p>
+    </div>
+    <div class="step" id="step6">
+        <div class="step-number">6</div>
+        <p>QR Code</p>
+    </div>
+</div>
+
+<!-- STEP 1 -->
+<form id="examForm">
+    <label for="examName">Exam Name</label>
+    <input type="text" id="examName" placeholder="e.g., Data Structures - Final Exam" required>
+
+    <label for="examDate">Exam Date</label>
+    <input type="date" id="examDate" required>
+
+    <label for="examSession">Exam Session</label>
+    <select id="examSession" required>
+        <option value="">Select Session</option>
+        <option value="firstHalf">First Half (10:00 AM - 1:00 PM)</option>
+        <option value="secondHalf">Second Half (2:00 PM - 5:00 PM)</option>
+    </select>
+
+    <button type="submit" id="proceedBtn">Proceed to Department Selection</button>
+</form>
+
+<!-- STEP 2 -->
+<div id="step2Content" style="display:none;">
+    <p>Select Departments (inputs appear below after selection)</p>
+    <div class="department-container">
+        <div class="department" data-name="BCA">BCA</div>
+        <div class="department" data-name="BBA">BBA</div>
+        <div class="department" data-name="CSE">CSE</div>
+        <div class="department" data-name="ECE">ECE</div>
+        <div class="department" data-name="ME">ME</div>
+        <div class="department" data-name="EEE">EEE</div>
+        <div class="department" data-name="CIVIL">CIVIL</div>
+    </div>
+    <div class="dynamic-inputs" id="dynamicInputs"></div>
+    <div class="flex-buttons">
+        <button id="backBtn">Back</button>
+        <button id="nextBtn" disabled>Proceed to Room Setup</button>
+    </div>
+</div>
+
+<!-- STEP 3 -->
+<div id="step3Content" style="display:none;">
+    <p>Room Setup</p>
+    <div class="room-setup">
+        <label for="buildingSelect">Select Building</label>
+        <select id="buildingSelect">
+            <option value="">Select Building</option>
+            <option value="Main Building">Main Building</option>
+            <option value="CMS">CMS</option>
+        </select>
+
+        <label for="roomNumber">Room Number</label>
+        <input type="text" id="roomNumber" placeholder="e.g., 303">
+
+        <label for="roomCapacity">Capacity</label>
+        <input type="number" id="roomCapacity" placeholder="e.g., 40">
+
+        <button id="addRoomBtn">+ Add Room</button>
+    </div>
+
+    <div id="roomList" style="margin-top: 20px; margin-bottom: 20px;"></div>
+
+    <div class="flex-buttons">
+        <button id="backStep3Btn">Back</button>
+        <button id="proceedStep3Btn" disabled>Proceed to Student Data</button>
+    </div>
+</div>
+
+<!-- STEP 4 -->
+<div id="step4Content" style="display:none;">
+    <h2>Upload Student Data</h2>
+    <p>Upload Excel files containing Roll Number, Student Name, and Department for each selected department</p>
+    <div id="uploadContainer"></div>
+    <p style="background:#f7f9fb; padding:10px; border-radius:5px; font-size:14px;">
+        <strong>Format:</strong> Each Excel file should contain columns: Roll Number, Student Name, Department
+    </p>
+    <div class="flex-buttons">
+        <button id="backStep4Btn">Back</button>
+        <button id="proceedStep4Btn" disabled>Generate Seating Arrangement</button>
+    </div>
+</div>
+
+<!-- STEP 5 -->
+<div id="step5Content" style="display:none;">
+    <h2>Seat Allocation Preview</h2>
+    <p>Visual representation of seating arrangements</p>
+    <div class="dept-tabs" id="deptTabs"></div>
+    <div class="room-section" id="roomSection"></div>
+    <div class="flex-buttons">
+        <button id="backStep5Btn">Back</button>
+        <button id="regenStep5Btn">Regenerate</button>
+        <button id="lockStep5Btn" disabled>Lock Seating</button>
+    </div>
+</div>
+
+<!-- STEP 6 -->
+<div id="step6Content" style="display:none;">
+    <h2>QR Code Generation</h2>
+    <p>Generate QR codes for students to scan and view their exam seat</p>
+    <div class="qr-layout">
+        <div class="qr-left">
+            <label for="sessionSelect">Select Session</label>
+            <select id="sessionSelect">
+                <option value="First Half">First Half</option>
+                <option value="Second Half">Second Half</option>
+            </select>
+            <div class="exam-details">
+                <p><strong>Name:</strong> <span id="examNameQR">-</span></p>
+                <p><strong>Date:</strong> <span id="examDateQR">-</span></p>
+                <p><strong>Session:</strong> <span id="examSessionQR">-</span></p>
+                <p><strong>Total Rooms:</strong> <span id="totalRoomsQR">-</span></p>
+            </div>
+            <div class="qr-note">
+                Students can scan this QR code with their phone to view their assigned seat and room number.
+            </div>
+        </div>
+        <div class="qr-right">
+            <div id="qrCodeBox">
+                <img id="qrPreview" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/student-portal" alt="QR Code">
+                <p>Scan to access student seating portal</p>
+            </div>
+        </div>
+    </div>
+    <div class="flex-buttons">
+        <button id="backStep6Btn">Back</button>
+        <button id="completeSetupBtn">Complete Setup</button>
+    </div>
+</div>
+
+</div>
+
+<script src="{% static 'exam/js/dashboard.js' %}"></script>
+</body>
+</html>
