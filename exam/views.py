@@ -183,35 +183,40 @@ def generate_seating(request):
 
             import random
             from string import ascii_uppercase
+
             random.shuffle(students)
-            row_labels = list(ascii_uppercase[:8])
             student_index = 0
+
+            # Define fixed seat pattern (A1–H5)
+            row_labels = list(ascii_uppercase[:8])  # A–H
+            all_possible_seats = [f"{row}{col}" for row in row_labels for col in range(1, 6)]  # A1–H5
 
             for room in rooms:
                 capacity = int(room.capacity)
-                total_cols = 5
-                total_rows = min(8, (capacity // total_cols) + 1)
+                available_seats = all_possible_seats.copy()
+                random.shuffle(available_seats)  # Shuffle seat positions randomly for this room
 
-                for r in range(total_rows):
-                    for c in range(1, total_cols + 1):
-                        if student_index >= len(students):
-                            break
-                        student = students[student_index]
-                        seat_label = f"{row_labels[r]}{c}"
-                        SeatAllocation.objects.create(
-                            exam=exam,
-                            student=student,
-                            room=room,
-                            session=exam.session,
-                            row=row_labels[r],
-                            column=c,
-                            seat_label=seat_label
-                        )
-                        student_index += 1
-                    if student_index >= len(students):
+                for i in range(capacity):
+                    if student_index >= len(students) or i >= len(available_seats):
                         break
 
-            # Fetch newly generated seating to return
+                    seat_label = available_seats[i]
+                    row_label = seat_label[0]
+                    col_number = int(seat_label[1:])
+
+                    student = students[student_index]
+                    SeatAllocation.objects.create(
+                        exam=exam,
+                        student=student,
+                        room=room,
+                        session=exam.session,
+                        row=row_label,
+                        column=col_number,
+                        seat_label=seat_label
+                    )
+                    student_index += 1
+
+            # Prepare response data
             rooms_data = []
             for room in rooms:
                 seats = SeatAllocation.objects.filter(room=room).select_related('student')
@@ -226,7 +231,7 @@ def generate_seating(request):
                     'seats': seat_list
                 })
 
-            return JsonResponse({'status': 'success', 'message': 'Seats allocated', 'rooms': rooms_data})
+            return JsonResponse({'status': 'success', 'message': 'Seats allocated randomly', 'rooms': rooms_data})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
